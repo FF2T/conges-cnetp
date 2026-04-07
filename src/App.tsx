@@ -4,10 +4,14 @@ import type { ResultatFractionnement } from "./calcul";
 import type { DemandeConge, Compteurs } from "./types";
 import "./App.css";
 
-const TOTAL_INITIAL = 33;
-const SEMAINE_INITIAL = 28;
+const CONGES_LEGAUX = 30;
 const SAMEDIS_INITIAL = 5;
 const STORAGE_KEY = "conges-cnetp-demandes";
+const SETTINGS_KEY = "conges-cnetp-settings";
+
+interface Settings {
+  dateEntree: string; // JJ/MM/AA ou YYYY-MM-DD
+}
 
 function formatDate(d: Date): string {
   return d.toLocaleDateString("fr-FR", {
@@ -35,6 +39,31 @@ function parseLocalDate(s: string): Date {
   }
   const [y, m, d] = s.split("-").map(Number);
   return new Date(y, m - 1, d);
+}
+
+/** Calcule les jours d'ancienneté selon la CC Travaux Publics (Cadres/ETAM) */
+function calculerAnciennete(dateEntree: string): { annees: number; joursBonus: number } {
+  if (!dateEntree) return { annees: 0, joursBonus: 0 };
+  const d = parseLocalDate(dateEntree);
+  if (isNaN(d.getTime())) return { annees: 0, joursBonus: 0 };
+
+  const now = new Date();
+  let annees = now.getFullYear() - d.getFullYear();
+  if (
+    now.getMonth() < d.getMonth() ||
+    (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())
+  ) {
+    annees--;
+  }
+  if (annees < 0) annees = 0;
+
+  let joursBonus = 0;
+  if (annees >= 20) joursBonus = 4;
+  else if (annees >= 15) joursBonus = 3;
+  else if (annees >= 10) joursBonus = 2;
+  else if (annees >= 5) joursBonus = 1;
+
+  return { annees, joursBonus };
 }
 
 function sauvegarder(demandes: DemandeConge[]) {
@@ -71,12 +100,28 @@ function charger(): DemandeConge[] {
   }
 }
 
+function chargerSettings(): Settings {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return { dateEntree: "" };
+    return JSON.parse(raw);
+  } catch {
+    return { dateEntree: "" };
+  }
+}
+
+function sauvegarderSettings(s: Settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
+
 function App() {
   const [demandes, setDemandes] = useState<DemandeConge[]>(charger);
+  const [settings, setSettings] = useState<Settings>(chargerSettings);
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
   const [erreur, setErreur] = useState("");
   const [detailOuvert, setDetailOuvert] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
   const dateDebutRef = useRef<HTMLInputElement>(null);
 
   const majDemandes = useCallback((fn: (prev: DemandeConge[]) => DemandeConge[]) => {
@@ -86,6 +131,14 @@ function App() {
       return next;
     });
   }, []);
+
+  const anciennete = useMemo(
+    () => calculerAnciennete(settings.dateEntree),
+    [settings.dateEntree]
+  );
+
+  const SEMAINE_INITIAL = CONGES_LEGAUX + anciennete.joursBonus;
+  const TOTAL_INITIAL = SEMAINE_INITIAL + SAMEDIS_INITIAL;
 
   const fractionnement: ResultatFractionnement = useMemo(() => {
     const annee = new Date().getFullYear();
@@ -100,6 +153,8 @@ function App() {
       samedisPris += d.samedis;
     }
     const bonus = fractionnement.bonus;
+    const semaineRestant = Math.max(0, SEMAINE_INITIAL + bonus - semainePris);
+    const samedisRestant = Math.max(0, SAMEDIS_INITIAL - samedisPris);
     return {
       totalInitial: TOTAL_INITIAL + bonus,
       semaineInitial: SEMAINE_INITIAL + bonus,
@@ -107,11 +162,11 @@ function App() {
       semainePris,
       samedisPris,
       fractionnement: bonus,
-      semaineRestant: SEMAINE_INITIAL + bonus - semainePris,
-      samedisRestant: SAMEDIS_INITIAL - samedisPris,
-      totalRestant: TOTAL_INITIAL + bonus - semainePris - samedisPris,
+      semaineRestant,
+      samedisRestant,
+      totalRestant: semaineRestant + samedisRestant,
     };
-  }, [demandes, fractionnement]);
+  }, [demandes, fractionnement, SEMAINE_INITIAL, TOTAL_INITIAL]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -204,7 +259,7 @@ function App() {
         const fin = parseLocalDate(sFin);
 
         if (isNaN(debut.getTime()) || isNaN(fin.getTime())) {
-          erreurs.push(`Ligne ${i + 1} : dates invalides (${sDebut} / ${sFin})`);
+          erreurs.push(`Ligne ${i + 1} : dates invalides`);
           continue;
         }
 
@@ -274,14 +329,83 @@ function App() {
     URL.revokeObjectURL(url);
   }
 
+  function handleSettingsDateEntree(val: string) {
+    const next = { ...settings, dateEntree: val };
+    setSettings(next);
+    sauvegarderSettings(next);
+  }
+
   return (
     <div className="app">
       <header>
-        <h1>Congés CNETP Cadre</h1>
-        <p className="subtitle">
-          Convention Collective des Travaux Publics · Jours ouvrables
-        </p>
+        <div className="header-row">
+          <h1>Mes Congés</h1>
+          <button
+            className="btn-settings"
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            {showSettings ? "Fermer" : "Paramètres"}
+          </button>
+        </div>
       </header>
+
+      {showSettings && (
+        <section className="settings-panel">
+          <h2>Paramètres</h2>
+
+          <div className="settings-group">
+            <label className="settings-label">
+              Date d'entrée dans l'entreprise
+              <input
+                type="text"
+                placeholder="JJ/MM/AA"
+                value={settings.dateEntree}
+                onChange={(e) => handleSettingsDateEntree(e.target.value)}
+              />
+            </label>
+            {anciennete.annees > 0 && (
+              <p className="settings-info">
+                {anciennete.annees} an(s) d'ancienneté → <strong>+{anciennete.joursBonus} jour(s)</strong> supplémentaire(s)
+              </p>
+            )}
+            <p className="settings-help">
+              CC Travaux Publics : +1j dès 5 ans, +2j dès 10 ans, +3j dès 15 ans, +4j dès 20 ans
+            </p>
+          </div>
+
+          <div className="settings-group">
+            <h3>Import / Export</h3>
+            <div className="settings-btns">
+              <label className="btn-import">
+                Importer CSV
+                <input
+                  type="file"
+                  accept=".csv,text/csv"
+                  onChange={importerCSV}
+                  hidden
+                />
+              </label>
+              {demandes.length > 0 && (
+                <button className="btn-export" onClick={exporterCSV}>
+                  Exporter CSV
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="explication">
+        {CONGES_LEGAUX} jours légaux
+        {anciennete.joursBonus > 0
+          ? ` + ${anciennete.joursBonus} ancienneté`
+          : ""}
+        {" "}= <strong>{SEMAINE_INITIAL} semaine</strong> + <strong>{SAMEDIS_INITIAL} samedis</strong>
+        {fractionnement.bonus > 0
+          ? <> + <strong>{fractionnement.bonus} fractionnement</strong></>
+          : ""}
+        {" "}= <strong>{compteurs.totalInitial} jours ouvrables</strong>
+      </section>
 
       <section className="dashboard">
         <div className="card total">
@@ -344,25 +468,7 @@ function App() {
       )}
 
       <section className="historique">
-        <div className="historique-header">
-          <h2>Historique</h2>
-          <div className="historique-actions">
-            <label className="btn-import">
-              Importer
-              <input
-                type="file"
-                accept=".csv,text/csv"
-                onChange={importerCSV}
-                hidden
-              />
-            </label>
-            {demandes.length > 0 && (
-              <button className="btn-export" onClick={exporterCSV}>
-                Exporter
-              </button>
-            )}
-          </div>
-        </div>
+        <h2>Historique</h2>
 
         {demandes.length === 0 ? (
           <p className="empty">Aucun congé enregistré.</p>
@@ -439,10 +545,7 @@ function App() {
       </section>
 
       <footer>
-        <p>
-          30 jours légaux + 3 ancienneté = 33 ouvrables (28 sem + 5 sam) +
-          fractionnement
-        </p>
+        <p>CNETP Cadre · Décompte en jours ouvrables</p>
       </footer>
     </div>
   );

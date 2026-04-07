@@ -7,22 +7,135 @@
 
 /* Header */
 header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   border-bottom: 3px solid var(--rouge);
-  padding-bottom: 16px;
+  padding-bottom: 14px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 header h1 {
   font-size: 24px;
   font-weight: var(--weight-black);
-  margin: 0 0 4px;
+  margin: 0;
   letter-spacing: -0.5px;
 }
 
-.subtitle {
+.btn-settings {
+  padding: 6px 14px;
+  background: var(--gris-light);
+  border: 1px solid var(--gris-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  font-family: var(--font);
+  color: var(--gris);
+  transition: all 0.15s;
+}
+
+.btn-settings:hover {
+  background: var(--bleu-light);
+  border-color: var(--bleu);
+  color: var(--bleu);
+}
+
+/* Settings panel */
+.settings-panel {
+  background: var(--gris-light);
+  border: 1px solid var(--gris-border);
+  border-radius: 10px;
+  padding: 20px 16px;
+  margin-bottom: 20px;
+}
+
+.settings-panel h2 {
+  font-size: 17px;
+  margin: 0 0 16px;
+  font-weight: var(--weight-heavy);
+}
+
+.settings-panel h3 {
+  font-size: 14px;
+  margin: 0 0 10px;
+  font-weight: var(--weight-heavy);
+}
+
+.settings-group {
+  margin-bottom: 20px;
+}
+
+.settings-group:last-child {
+  margin-bottom: 0;
+}
+
+.settings-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  color: var(--gris);
+  gap: 5px;
+}
+
+.settings-label input {
+  padding: 10px 12px;
+  border: 1px solid var(--gris-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: var(--font);
+  font-weight: var(--weight-roman);
+  background: var(--blanc);
+  color: var(--noir);
+  max-width: 200px;
+}
+
+.settings-label input:focus {
+  outline: none;
+  border-color: var(--bleu);
+  box-shadow: 0 0 0 3px rgba(0, 136, 206, 0.2);
+}
+
+.settings-info {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: var(--weight-roman);
+  color: var(--vert);
+}
+
+.settings-help {
+  margin: 6px 0 0;
+  font-size: 12px;
+  font-weight: var(--weight-book);
+  color: var(--gris);
+}
+
+.settings-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Explication compteur */
+.explication {
   font-size: 13px;
   font-weight: var(--weight-book);
   color: var(--gris);
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--gris-light);
+  border: 1px solid var(--gris-border);
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.explication strong {
+  font-weight: var(--weight-heavy);
+  color: var(--noir);
 }
 
 /* Dashboard */
@@ -209,23 +322,10 @@ header h1 {
   margin-bottom: 32px;
 }
 
-.historique-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-  gap: 8px;
-}
-
-.historique-header h2 {
+.historique > h2 {
   font-size: 18px;
   font-weight: var(--weight-heavy);
-  margin: 0;
-}
-
-.historique-actions {
-  display: flex;
-  gap: 8px;
+  margin: 0 0 14px;
 }
 
 .btn-export,
@@ -510,13 +610,19 @@ footer {
     font-size: 13px;
   }
 
-  .historique-header {
-    flex-wrap: wrap;
+  .header-row {
+    gap: 8px;
   }
 
-  .btn-export,
-  .btn-import {
-    padding: 7px 10px;
+  .settings-label input {
+    max-width: 100%;
+  }
+
+  .settings-btns {
+    flex-direction: column;
+  }
+
+  .explication {
     font-size: 12px;
   }
 }
