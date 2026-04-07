@@ -1,0 +1,626 @@
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  -webkit-text-size-adjust: 100%;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 13px;
+  opacity: 0.65;
+}
+
+/* Dashboard */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.card {
+  border-radius: 10px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.card-value {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.card-sub {
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.card.total {
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+}
+
+.card.semaine {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.card.samedis {
+  background: #fef9ee;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.card.fractionnement {
+  background: #faf5ff;
+  color: #6b21a8;
+  border: 1px solid #d8b4fe;
+}
+
+.card.fractionnement .card-sub {
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+/* Form */
+.form-section {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px 16px;
+  margin-bottom: 20px;
+}
+
+.form-section h2 {
+  font-size: 17px;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.form-row label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.form-row input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background: #fff;
+  width: 100%;
+}
+
+.form-row input[type="text"]:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-primary:hover {
+  background: #4338ca;
+}
+
+.btn-primary:active {
+  background: #3730a3;
+}
+
+.erreur {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Apercu */
+.apercu {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.apercu h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: #92400e;
+}
+
+.apercu-grid {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.apercu-grid strong {
+  color: #92400e;
+}
+
+/* Historique */
+.historique {
+  margin-bottom: 32px;
+}
+
+.historique-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 8px;
+}
+
+.historique-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.historique-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-export,
+.btn-import {
+  padding: 7px 14px;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-export:hover,
+.btn-import:hover {
+  background: #f3f4f6;
+}
+
+/* Demandes cards */
+.demandes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.demande-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.demande-main {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.demande-dates {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 180px;
+}
+
+.demande-chiffres {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.chip-sem {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.chip-sam {
+  background: #fef9ee;
+  color: #92400e;
+}
+
+.demande-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-detail,
+.btn-suppr {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid #d1d5db;
+  background: #fff;
+}
+
+.btn-detail:hover {
+  background: #eef2ff;
+  border-color: #a5b4fc;
+}
+
+.btn-suppr {
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.btn-suppr:hover {
+  background: #fef2f2;
+}
+
+.demande-detail {
+  padding: 0 16px 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.totaux {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* Detail table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.detail-table {
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.detail-table th {
+  background: #f9fafb;
+  padding: 7px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.detail-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.non-decompte {
+  opacity: 0.45;
+}
+
+.apercu-table {
+  background: #fffef5;
+}
+
+.empty {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 32px 0;
+}
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.5;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .app {
+    color: #e5e7eb;
+  }
+
+  header h1 {
+    color: #f3f4f6;
+  }
+
+  .card.total {
+    background: #1e1b4b;
+    color: #a5b4fc;
+    border-color: #3730a3;
+  }
+
+  .card.semaine {
+    background: #052e16;
+    color: #86efac;
+    border-color: #166534;
+  }
+
+  .card.samedis {
+    background: #451a03;
+    color: #fcd34d;
+    border-color: #92400e;
+  }
+
+  .card.fractionnement {
+    background: #2e1065;
+    color: #d8b4fe;
+    border-color: #6b21a8;
+  }
+
+  .form-section {
+    background: #1f2028;
+    border-color: #2e303a;
+  }
+
+  .form-row label {
+    color: #9ca3af;
+  }
+
+  .form-row input[type="text"] {
+    background: #16171d;
+    border-color: #374151;
+    color: #e5e7eb;
+  }
+
+  .erreur {
+    background: #450a0a;
+    border-color: #991b1b;
+    color: #fca5a5;
+  }
+
+  .apercu {
+    background: #451a03;
+    border-color: #92400e;
+  }
+
+  .apercu h3 {
+    color: #fcd34d;
+  }
+
+  .apercu-grid strong {
+    color: #fcd34d;
+  }
+
+  .demande-card {
+    background: #1f2028;
+    border-color: #2e303a;
+  }
+
+  .chip {
+    background: #1e1b4b;
+    color: #a5b4fc;
+  }
+
+  .chip-sem {
+    background: #052e16;
+    color: #86efac;
+  }
+
+  .chip-sam {
+    background: #451a03;
+    color: #fcd34d;
+  }
+
+  .totaux {
+    background: #1f2028;
+    border-color: #2e303a;
+  }
+
+  .btn-detail,
+  .btn-suppr,
+  .btn-export,
+  .btn-import {
+    background: #1f2028;
+    border-color: #374151;
+    color: #d1d5db;
+  }
+
+  .btn-suppr {
+    color: #f87171;
+    border-color: #7f1d1d;
+  }
+
+  .detail-table {
+    background: #16171d;
+    border-color: #2e303a;
+  }
+
+  .detail-table th {
+    background: #1f2028;
+    color: #9ca3af;
+    border-color: #2e303a;
+  }
+
+  .detail-table td {
+    border-color: #2e303a;
+  }
+
+  .apercu-table {
+    background: #1c1306;
+  }
+
+  footer {
+    border-color: #2e303a;
+  }
+}
+
+/* Mobile - iPhone 17 Pro (402pt) et similaires */
+@media (max-width: 640px) {
+  .app {
+    padding: 16px 12px 32px;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .card {
+    padding: 12px 8px;
+  }
+
+  .card-value {
+    font-size: 28px;
+  }
+
+  .card-label {
+    font-size: 10px;
+  }
+
+  .form-section {
+    padding: 16px 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-row label {
+    flex: none;
+    width: 100%;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .demande-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .demande-dates {
+    font-size: 13px;
+    min-width: 0;
+  }
+
+  .demande-chiffres {
+    flex-wrap: wrap;
+  }
+
+  .demande-btns {
+    width: 100%;
+  }
+
+  .demande-btns button {
+    flex: 1;
+  }
+
+  .demande-detail {
+    padding: 0 12px 12px;
+  }
+
+  .detail-table {
+    font-size: 11px;
+  }
+
+  .detail-table th,
+  .detail-table td {
+    padding: 5px 6px;
+  }
+
+  .apercu-grid {
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .historique-header {
+    flex-wrap: wrap;
+  }
+
+  .btn-export,
+  .btn-import {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
