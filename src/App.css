@@ -74,7 +74,7 @@ header h1 {
 
 .card.samedis {
   background: var(--jaune-light);
-  color: var(--jaune-dark);
+  color: var(--jaune);
   border: 1px solid var(--jaune);
 }
 
@@ -187,7 +187,7 @@ header h1 {
   font-size: 15px;
   font-weight: var(--weight-heavy);
   margin: 0 0 10px;
-  color: var(--jaune-dark);
+  color: var(--jaune);
 }
 
 .apercu-grid {
@@ -200,7 +200,7 @@ header h1 {
 }
 
 .apercu-grid strong {
-  color: var(--jaune-dark);
+  color: var(--jaune);
   font-weight: var(--weight-heavy);
 }
 
@@ -301,7 +301,7 @@ header h1 {
 
 .chip-sam {
   background: var(--jaune-light);
-  color: var(--jaune-dark);
+  color: var(--jaune);
 }
 
 .demande-btns {
@@ -375,8 +375,8 @@ table {
 }
 
 .detail-table th {
-  background: var(--noir);
-  color: var(--blanc);
+  background: #2a2c30;
+  color: #f0f0f1;
   padding: 7px 10px;
   text-align: left;
   font-weight: var(--weight-medium);
@@ -400,8 +400,8 @@ table {
 }
 
 .apercu-table th {
-  background: var(--jaune-dark);
-  color: #fff;
+  background: #3d3500;
+  color: var(--jaune);
 }
 
 .empty {

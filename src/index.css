@@ -4,52 +4,36 @@
   --bleu: #0088CE;
   --jaune: #FED100;
   --vert: #34B233;
-  --noir: #000000;
-  --blanc: #FFFFFF;
-  --gris: #6D6F72;
+  --gris: #9a9b9e;
 
-  /* Déclinaisons */
-  --bleu-light: #e6f4fb;
-  --bleu-dark: #006da3;
-  --vert-light: #e8f7e8;
-  --vert-dark: #238a22;
-  --jaune-light: #fef8e0;
-  --jaune-dark: #8a7000;
-  --rouge-light: #fff0f0;
-  --rouge-dark: #cc0000;
-  --gris-light: #f2f2f3;
-  --gris-border: #d4d5d6;
+  /* Dark mode direct */
+  --noir: #f0f0f1;
+  --blanc: #111214;
+  --gris-light: #1e2025;
+  --gris-border: #3a3c40;
+  --bleu-light: #0c2a3d;
+  --bleu-dark: #4db8e8;
+  --vert-light: #0e2a0e;
+  --vert-dark: #5cd65c;
+  --jaune-light: #2e2800;
+  --jaune-dark: #fedd44;
+  --rouge-light: #3a0000;
+  --rouge-dark: #ff4444;
 
   /* Typographie */
   --font: 'Avenir LT Std', 'Avenir', 'Avenir Next', 'Nunito Sans', system-ui, -apple-system, sans-serif;
-  --weight-black: 900;   /* 95 Black */
-  --weight-heavy: 800;   /* 85 Heavy */
-  --weight-medium: 500;  /* 65 Medium */
-  --weight-roman: 400;   /* 55 Roman */
-  --weight-book: 300;    /* 45 Book */
+  --weight-black: 900;
+  --weight-heavy: 800;
+  --weight-medium: 500;
+  --weight-roman: 400;
+  --weight-book: 300;
 
   font: 16px/1.5 var(--font);
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--noir);
   background: var(--blanc);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --blanc: #111214;
-    --noir: #f0f0f1;
-    --gris-light: #1e2025;
-    --gris-border: #3a3c40;
-    --bleu-light: #0c2a3d;
-    --vert-light: #0e2a0e;
-    --jaune-light: #2e2800;
-    --rouge-light: #3a0000;
-
-    color: var(--noir);
-    background: var(--blanc);
-  }
 }
 
 * {
