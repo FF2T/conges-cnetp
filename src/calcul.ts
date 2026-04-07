@@ -176,19 +176,19 @@ export function calculerFractionnement(
     }
   }
 
-  // Vérifier qu'au moins 12 jours continus ont été pris en période légale
-  // On cherche la plus longue séquence de jours décomptés consécutifs en période
+  // Vérifier qu'au moins 12 jours ouvrables continus ont été pris en période légale.
+  // On cherche la demande avec le plus de jours décomptés en période.
+  // Les dimanches/fériés au milieu ne cassent pas la continuité.
   let maxJoursContinus = 0;
   for (const demande of demandes) {
-    let continus = 0;
+    let joursEnPeriode = 0;
     for (const det of demande.details) {
       if (!det.decompte) continue;
-      const d = det.date;
-      if (d >= debutPeriode && d <= finPeriode) {
-        continus++;
-        if (continus > maxJoursContinus) maxJoursContinus = continus;
+      if (det.date >= debutPeriode && det.date <= finPeriode) {
+        joursEnPeriode++;
       }
     }
+    if (joursEnPeriode > maxJoursContinus) maxJoursContinus = joursEnPeriode;
   }
 
   let bonus: number;
