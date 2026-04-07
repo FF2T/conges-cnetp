@@ -57,11 +57,10 @@ function calculerAnciennete(dateEntree: string): { annees: number; joursBonus: n
   }
   if (annees < 0) annees = 0;
 
+  // CC Travaux Publics — Cadres
   let joursBonus = 0;
-  if (annees >= 20) joursBonus = 4;
-  else if (annees >= 15) joursBonus = 3;
-  else if (annees >= 10) joursBonus = 2;
-  else if (annees >= 5) joursBonus = 1;
+  if (annees >= 10) joursBonus = 3;
+  else if (annees >= 5) joursBonus = 2;
 
   return { annees, joursBonus };
 }
@@ -369,7 +368,7 @@ function App() {
               </p>
             )}
             <p className="settings-help">
-              CC Travaux Publics : +1j dès 5 ans, +2j dès 10 ans, +3j dès 15 ans, +4j dès 20 ans
+              CC Travaux Publics Cadres : +2j dès 5 ans, +3j dès 10 ans
             </p>
           </div>
 
