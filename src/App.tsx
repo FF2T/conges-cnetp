@@ -250,7 +250,9 @@ function App() {
       creeLe: new Date(),
     };
 
-    majDemandes((prev) => [...prev, demande]);
+    majDemandes((prev) =>
+      [...prev, demande].sort((a, b) => a.dateDebut.getTime() - b.dateDebut.getTime())
+    );
     setDateDebut("");
     setDateFin("");
     requestAnimationFrame(() => dateDebutRef.current?.focus());
@@ -316,7 +318,9 @@ function App() {
             : "Aucune ligne valide trouvée dans le fichier."
         );
       } else {
-        majDemandes((prev) => [...prev, ...nouvelles]);
+        majDemandes((prev) =>
+          [...prev, ...nouvelles].sort((a, b) => a.dateDebut.getTime() - b.dateDebut.getTime())
+        );
         setErreur(
           erreurs.length > 0
             ? `${nouvelles.length} congé(s) importé(s). Erreurs ignorées : ${erreurs.join(" | ")}`
