@@ -148,8 +148,7 @@ function App() {
   const TOTAL_INITIAL = SEMAINE_INITIAL + SAMEDIS_INITIAL;
 
   const fractionnement: ResultatFractionnement = useMemo(() => {
-    const annee = new Date().getFullYear();
-    return calculerFractionnement(demandes, annee);
+    return calculerFractionnement(demandes);
   }, [demandes]);
 
   const compteurs: Compteurs = useMemo(() => {

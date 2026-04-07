@@ -143,21 +143,22 @@ export interface ResultatFractionnement {
 }
 
 export function calculerFractionnement(
-  demandes: { dateDebut: Date; dateFin: Date; totalJours: number; details: DecompteDetail[] }[],
-  annee: number
+  demandes: { dateDebut: Date; dateFin: Date; totalJours: number; details: DecompteDetail[] }[]
 ): ResultatFractionnement {
-  const debutPeriode = new Date(annee, 4, 1);  // 1er mai
-  const finPeriode = new Date(annee, 9, 31);   // 31 octobre
+  // Période légale = mai à octobre, quelle que soit l'année
+  function estEnPeriodeLegale(d: Date): boolean {
+    const mois = d.getMonth(); // 0-indexed: 4=mai, 9=octobre
+    return mois >= 4 && mois <= 9;
+  }
 
-  // Collecter tous les jours décomptés, triés par date
+  // Collecter tous les jours décomptés
   const tousJoursDecomptes: { date: Date; enPeriode: boolean }[] = [];
   for (const demande of demandes) {
     for (const det of demande.details) {
       if (!det.decompte) continue;
-      const d = det.date;
       tousJoursDecomptes.push({
-        date: d,
-        enPeriode: d >= debutPeriode && d <= finPeriode,
+        date: det.date,
+        enPeriode: estEnPeriodeLegale(det.date),
       });
     }
   }
@@ -178,13 +179,12 @@ export function calculerFractionnement(
 
   // Vérifier qu'au moins 12 jours ouvrables continus ont été pris en période légale.
   // On cherche la demande avec le plus de jours décomptés en période.
-  // Les dimanches/fériés au milieu ne cassent pas la continuité.
   let maxJoursContinus = 0;
   for (const demande of demandes) {
     let joursEnPeriode = 0;
     for (const det of demande.details) {
       if (!det.decompte) continue;
-      if (det.date >= debutPeriode && det.date <= finPeriode) {
+      if (estEnPeriodeLegale(det.date)) {
         joursEnPeriode++;
       }
     }
