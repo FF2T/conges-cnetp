@@ -395,14 +395,29 @@ function App() {
       )}
 
       <section className="explication">
-        30 jours ouvrables ({SEMAINE_LEGAUX} sem + {SAMEDIS_INITIAL} sam)
-        {anciennete.joursBonus > 0
-          ? <> + <strong>{anciennete.joursBonus} ancienneté</strong></>
-          : ""}
-        {fractionnement.bonus > 0
-          ? <> + <strong>{fractionnement.bonus} fractionnement</strong></>
-          : ""}
-        {" "}= <strong>{compteurs.totalInitial} jours</strong> ({compteurs.semaineInitial} sem + {SAMEDIS_INITIAL} sam)
+        <div className="expli-line acquis">
+          <span className="expli-label">Acquis</span>
+          <span className="expli-detail">
+            30 ouvrables
+            {anciennete.joursBonus > 0 && <> + {anciennete.joursBonus} ancienneté</>}
+            {fractionnement.bonus > 0 && <> + {fractionnement.bonus} fractionnement</>}
+          </span>
+          <span className="expli-total">{compteurs.totalInitial}j</span>
+        </div>
+        <div className="expli-line pris">
+          <span className="expli-label">Pris</span>
+          <span className="expli-detail">
+            {compteurs.semainePris} sem + {compteurs.samedisPris} sam
+          </span>
+          <span className="expli-total">{compteurs.semainePris + compteurs.samedisPris}j</span>
+        </div>
+        <div className="expli-line solde">
+          <span className="expli-label">Solde</span>
+          <span className="expli-detail">
+            {compteurs.semaineRestant} sem + {compteurs.samedisRestant} sam
+          </span>
+          <span className="expli-total">{compteurs.totalRestant}j</span>
+        </div>
       </section>
 
       <section className="dashboard">

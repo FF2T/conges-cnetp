@@ -123,19 +123,69 @@ header h1 {
 /* Explication compteur */
 .explication {
   font-size: 13px;
-  font-weight: var(--weight-book);
-  color: var(--gris);
-  margin-bottom: 16px;
-  padding: 10px 14px;
-  background: var(--gris-light);
+  margin-bottom: 20px;
   border: 1px solid var(--gris-border);
-  border-radius: 8px;
-  line-height: 1.6;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.explication strong {
+.expli-line {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 12px;
+}
+
+.expli-line + .expli-line {
+  border-top: 1px solid var(--gris-border);
+}
+
+.expli-label {
   font-weight: var(--weight-heavy);
-  color: var(--noir);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.expli-detail {
+  flex: 1;
+  font-weight: var(--weight-book);
+  color: var(--gris);
+}
+
+.expli-total {
+  font-weight: var(--weight-black);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.expli-line.acquis {
+  background: var(--bleu-light);
+}
+
+.expli-line.acquis .expli-label,
+.expli-line.acquis .expli-total {
+  color: var(--bleu);
+}
+
+.expli-line.pris {
+  background: var(--rouge-light);
+}
+
+.expli-line.pris .expli-label,
+.expli-line.pris .expli-total {
+  color: var(--rouge);
+}
+
+.expli-line.solde {
+  background: var(--vert-light);
+}
+
+.expli-line.solde .expli-label,
+.expli-line.solde .expli-total {
+  color: var(--vert);
 }
 
 /* Dashboard */
