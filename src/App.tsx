@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { calculerConges, calculerFractionnement } from "./calcul";
 import type { ResultatFractionnement } from "./calcul";
 import type { DemandeConge, Compteurs } from "./types";
