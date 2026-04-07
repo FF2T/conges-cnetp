@@ -326,6 +326,17 @@ header h1 {
   font-weight: var(--weight-roman);
 }
 
+.avertissement {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--jaune-light);
+  border: 1px solid var(--jaune);
+  color: var(--jaune);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: var(--weight-roman);
+}
+
 /* Apercu */
 .apercu {
   background: var(--jaune-light);

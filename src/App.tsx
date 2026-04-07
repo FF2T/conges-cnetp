@@ -119,6 +119,7 @@ function App() {
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
   const [erreur, setErreur] = useState("");
+  const [avertissement, setAvertissement] = useState("");
   const [detailOuvert, setDetailOuvert] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const dateDebutRef = useRef<HTMLInputElement>(null);
@@ -172,6 +173,7 @@ function App() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErreur("");
+    setAvertissement("");
 
     if (!dateDebut) {
       setErreur("Veuillez saisir la date de début.");
@@ -202,6 +204,26 @@ function App() {
 
     if (result.erreur) {
       setErreur(result.erreur);
+      return;
+    }
+
+    if (result.samedisDecomptes > 0 && compteurs.samedisRestant === 0) {
+      setAvertissement(
+        `Attention : votre solde samedis est à 0. Le(s) ${result.samedisDecomptes} samedi(s) de cette période ne sera/seront pas décompté(s). Pensez à ajuster vos dates (ex: terminer au vendredi).`
+      );
+      // On retire les samedis du décompte
+      result.samedisDecomptes = 0;
+      result.totalJoursDecomptes = result.joursSemaineDecomptes;
+      for (const det of result.details) {
+        if (det.type === "samedi" && det.decompte) {
+          det.decompte = false;
+          det.commentaire = "Samedi non décompté — solde samedis épuisé";
+        }
+      }
+    } else if (result.samedisDecomptes > compteurs.samedisRestant) {
+      setErreur(
+        `Solde samedis insuffisant ! Cette demande contient ${result.samedisDecomptes} samedi(s) mais il n'en reste que ${compteurs.samedisRestant}.`
+      );
       return;
     }
 
@@ -471,6 +493,7 @@ function App() {
           </div>
         </form>
         {erreur && <div className="erreur">{erreur}</div>}
+        {avertissement && <div className="avertissement">{avertissement}</div>}
       </section>
 
       {dateDebut && dateFin && !erreur && (
