@@ -125,15 +125,19 @@ export function calculerConges(
 /**
  * Calcule les jours de fractionnement.
  *
- * Règle : on regarde le nombre de jours ouvrables pris
- * en dehors de la période légale (1er mai → 31 octobre).
- * - Si >= 6 jours hors période → 2 jours bonus
- * - Si 3 à 5 jours hors période → 1 jour bonus
- * - Sinon → 0
+ * Règles (CC Travaux Publics) :
+ * - Seuls les 24 premiers jours (congé principal, 4 semaines) comptent.
+ *   La 5e semaine (6 jours) est exclue du calcul.
+ * - Il faut qu'au moins 12 jours continus aient été pris entre le 1er mai
+ *   et le 31 octobre pour ouvrir le droit au fractionnement.
+ * - On compte les jours du congé principal pris HORS période légale (1/05–31/10).
+ * - 3 à 5 jours hors période → +1 jour
+ * - >= 6 jours hors période → +2 jours
  */
 export interface ResultatFractionnement {
   joursPrisHorsPeriode: number;
   joursPrisEnPeriode: number;
+  maxJoursContinus: number;
   bonus: number;
   explication: string;
 }
@@ -145,17 +149,44 @@ export function calculerFractionnement(
   const debutPeriode = new Date(annee, 4, 1);  // 1er mai
   const finPeriode = new Date(annee, 9, 31);   // 31 octobre
 
-  let joursPrisEnPeriode = 0;
-  let joursPrisHorsPeriode = 0;
-
+  // Collecter tous les jours décomptés, triés par date
+  const tousJoursDecomptes: { date: Date; enPeriode: boolean }[] = [];
   for (const demande of demandes) {
     for (const det of demande.details) {
       if (!det.decompte) continue;
       const d = det.date;
+      tousJoursDecomptes.push({
+        date: d,
+        enPeriode: d >= debutPeriode && d <= finPeriode,
+      });
+    }
+  }
+
+  // Ne considérer que les 24 premiers jours (congé principal)
+  // La 5e semaine (au-delà de 24) est exclue du fractionnement
+  const joursCongesPrincipal = tousJoursDecomptes.slice(0, 24);
+
+  let joursPrisEnPeriode = 0;
+  let joursPrisHorsPeriode = 0;
+  for (const j of joursCongesPrincipal) {
+    if (j.enPeriode) {
+      joursPrisEnPeriode++;
+    } else {
+      joursPrisHorsPeriode++;
+    }
+  }
+
+  // Vérifier qu'au moins 12 jours continus ont été pris en période légale
+  // On cherche la plus longue séquence de jours décomptés consécutifs en période
+  let maxJoursContinus = 0;
+  for (const demande of demandes) {
+    let continus = 0;
+    for (const det of demande.details) {
+      if (!det.decompte) continue;
+      const d = det.date;
       if (d >= debutPeriode && d <= finPeriode) {
-        joursPrisEnPeriode++;
-      } else {
-        joursPrisHorsPeriode++;
+        continus++;
+        if (continus > maxJoursContinus) maxJoursContinus = continus;
       }
     }
   }
@@ -163,16 +194,19 @@ export function calculerFractionnement(
   let bonus: number;
   let explication: string;
 
-  if (joursPrisHorsPeriode >= 6) {
+  if (maxJoursContinus < 12) {
+    bonus = 0;
+    explication = `Pas de congé principal de 12j continus en période légale (max ${maxJoursContinus}j)`;
+  } else if (joursPrisHorsPeriode >= 6) {
     bonus = 2;
-    explication = `${joursPrisHorsPeriode} jour(s) hors période légale → +2j`;
+    explication = `${joursPrisHorsPeriode}j hors période (sur 24j principaux) → +2j`;
   } else if (joursPrisHorsPeriode >= 3) {
     bonus = 1;
-    explication = `${joursPrisHorsPeriode} jour(s) hors période légale → +1j`;
+    explication = `${joursPrisHorsPeriode}j hors période (sur 24j principaux) → +1j`;
   } else {
     bonus = 0;
-    explication = `${joursPrisHorsPeriode} jour(s) hors période légale → +0j`;
+    explication = `${joursPrisHorsPeriode}j hors période (sur 24j principaux) → +0j`;
   }
 
-  return { joursPrisHorsPeriode, joursPrisEnPeriode, bonus, explication };
+  return { joursPrisHorsPeriode, joursPrisEnPeriode, maxJoursContinus, bonus, explication };
 }
