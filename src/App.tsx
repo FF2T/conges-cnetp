@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { calculerConges, calculerFractionnement } from "./calcul";
 import type { ResultatFractionnement } from "./calcul";
 import type { DemandeConge, Compteurs } from "./types";
@@ -9,8 +9,11 @@ const SAMEDIS_INITIAL = 5;
 const STORAGE_KEY = "conges-cnetp-demandes";
 const SETTINGS_KEY = "conges-cnetp-settings";
 
+type Theme = "light" | "dark";
+
 interface Settings {
-  dateEntree: string; // JJ/MM/AA ou YYYY-MM-DD
+  dateEntree: string;
+  theme: Theme;
 }
 
 function formatDate(d: Date): string {
@@ -102,10 +105,11 @@ function charger(): DemandeConge[] {
 function chargerSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { dateEntree: "" };
-    return JSON.parse(raw);
+    if (!raw) return { dateEntree: "", theme: "dark" as Theme };
+    const parsed = JSON.parse(raw);
+    return { dateEntree: parsed.dateEntree || "", theme: parsed.theme || "dark" };
   } catch {
-    return { dateEntree: "" };
+    return { dateEntree: "", theme: "dark" as Theme };
   }
 }
 
@@ -122,6 +126,10 @@ function App() {
   const [detailOuvert, setDetailOuvert] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const dateDebutRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", settings.theme);
+  }, [settings.theme]);
 
   const majDemandes = useCallback((fn: (prev: DemandeConge[]) => DemandeConge[]) => {
     setDemandes((prev) => {
@@ -361,8 +369,8 @@ function App() {
     URL.revokeObjectURL(url);
   }
 
-  function handleSettingsDateEntree(val: string) {
-    const next = { ...settings, dateEntree: val };
+  function updateSettings(patch: Partial<Settings>) {
+    const next = { ...settings, ...patch };
     setSettings(next);
     sauvegarderSettings(next);
   }
@@ -386,13 +394,31 @@ function App() {
           <h2>Paramètres</h2>
 
           <div className="settings-group">
+            <div className="settings-label">Thème</div>
+            <div className="theme-toggle">
+              <button
+                className={`theme-btn ${settings.theme === "light" ? "active" : ""}`}
+                onClick={() => updateSettings({ theme: "light" })}
+              >
+                Clair
+              </button>
+              <button
+                className={`theme-btn ${settings.theme === "dark" ? "active" : ""}`}
+                onClick={() => updateSettings({ theme: "dark" })}
+              >
+                Sombre
+              </button>
+            </div>
+          </div>
+
+          <div className="settings-group">
             <label className="settings-label">
               Date d'entrée dans l'entreprise
               <input
                 type="text"
                 placeholder="JJ/MM/AA"
                 value={settings.dateEntree}
-                onChange={(e) => handleSettingsDateEntree(e.target.value)}
+                onChange={(e) => updateSettings({ dateEntree: e.target.value })}
               />
             </label>
             {anciennete.annees > 0 && (
