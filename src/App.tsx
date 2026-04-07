@@ -152,8 +152,10 @@ function App() {
       samedisPris += d.samedis;
     }
     const bonus = fractionnement.bonus;
-    const semaineRestant = Math.max(0, SEMAINE_INITIAL + bonus - semainePris);
+    // Si plus de samedis pris que disponibles, le surplus mange les jours semaine
+    const samedisDebord = Math.max(0, samedisPris - SAMEDIS_INITIAL);
     const samedisRestant = Math.max(0, SAMEDIS_INITIAL - samedisPris);
+    const semaineRestant = Math.max(0, SEMAINE_INITIAL + bonus - semainePris - samedisDebord);
     return {
       totalInitial: TOTAL_INITIAL + bonus,
       semaineInitial: SEMAINE_INITIAL + bonus,
