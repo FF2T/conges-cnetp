@@ -141,7 +141,7 @@ header h1 {
 /* Dashboard */
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 24px;
 }
@@ -189,17 +189,6 @@ header h1 {
   background: var(--jaune-light);
   color: var(--jaune);
   border: 1px solid var(--jaune);
-}
-
-.card.fractionnement {
-  background: var(--gris-light);
-  color: var(--gris);
-  border: 1px solid var(--gris-border);
-}
-
-.card.fractionnement .card-sub {
-  font-size: 10px;
-  line-height: 1.4;
 }
 
 /* Form */

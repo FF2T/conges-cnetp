@@ -421,11 +421,6 @@ function App() {
           <div className="card-value">{compteurs.samedisRestant}</div>
           <div className="card-sub">/ {SAMEDIS_INITIAL} jours</div>
         </div>
-        <div className="card fractionnement">
-          <div className="card-label">Fractionnement</div>
-          <div className="card-value">+{fractionnement.bonus}</div>
-          <div className="card-sub">{fractionnement.explication}</div>
-        </div>
       </section>
 
       <section className="form-section">
