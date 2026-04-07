@@ -326,8 +326,8 @@ function App() {
             : "Aucune ligne valide trouvée dans le fichier."
         );
       } else {
-        majDemandes((prev) =>
-          [...prev, ...nouvelles].sort((a, b) => a.dateDebut.getTime() - b.dateDebut.getTime())
+        majDemandes(() =>
+          nouvelles.sort((a, b) => a.dateDebut.getTime() - b.dateDebut.getTime())
         );
         setErreur(
           erreurs.length > 0
@@ -367,6 +367,21 @@ function App() {
     a.download = "conges-cnetp.csv";
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  function recalculerTout() {
+    majDemandes((prev) =>
+      prev.map((d) => {
+        const result = calculerConges(d.dateDebut, d.dateFin);
+        return {
+          ...d,
+          joursSemaine: result.joursSemaineDecomptes,
+          samedis: result.samedisDecomptes,
+          totalJours: result.totalJoursDecomptes,
+          details: result.details,
+        };
+      })
+    );
   }
 
   function updateSettings(patch: Partial<Settings>) {
@@ -444,9 +459,14 @@ function App() {
                 />
               </label>
               {demandes.length > 0 && (
-                <button className="btn-export" onClick={exporterCSV}>
-                  Exporter CSV
-                </button>
+                <>
+                  <button className="btn-export" onClick={exporterCSV}>
+                    Exporter CSV
+                  </button>
+                  <button className="btn-export" onClick={recalculerTout}>
+                    Recalculer tout
+                  </button>
+                </>
               )}
             </div>
           </div>
