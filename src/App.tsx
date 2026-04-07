@@ -459,7 +459,10 @@ function App() {
           <span className="expli-detail">
             30 ouvrables
             {anciennete.joursBonus > 0 && <> + {anciennete.joursBonus} ancienneté</>}
-            {fractionnement.bonus > 0 && <> + {fractionnement.bonus} fractionnement</>}
+            {fractionnement.bonus > 0
+              ? <> + {fractionnement.bonus} fractionnement</>
+              : <> · <span className="expli-frac-info">{fractionnement.explication}</span></>
+            }
           </span>
           <span className="expli-total">{compteurs.totalInitial}j</span>
         </div>

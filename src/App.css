@@ -191,6 +191,11 @@ header h1 {
   flex-shrink: 0;
 }
 
+.expli-frac-info {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
 .expli-line.acquis {
   background: var(--bleu-light);
 }
