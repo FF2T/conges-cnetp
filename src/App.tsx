@@ -4,7 +4,7 @@ import type { ResultatFractionnement } from "./calcul";
 import type { DemandeConge, Compteurs } from "./types";
 import "./App.css";
 
-const CONGES_LEGAUX = 30;
+const SEMAINE_LEGAUX = 25; // 30 ouvrables = 25 sem (L-V) + 5 sam
 const SAMEDIS_INITIAL = 5;
 const STORAGE_KEY = "conges-cnetp-demandes";
 const SETTINGS_KEY = "conges-cnetp-settings";
@@ -136,7 +136,7 @@ function App() {
     [settings.dateEntree]
   );
 
-  const SEMAINE_INITIAL = CONGES_LEGAUX + anciennete.joursBonus;
+  const SEMAINE_INITIAL = SEMAINE_LEGAUX + anciennete.joursBonus;
   const TOTAL_INITIAL = SEMAINE_INITIAL + SAMEDIS_INITIAL;
 
   const fractionnement: ResultatFractionnement = useMemo(() => {
@@ -395,15 +395,14 @@ function App() {
       )}
 
       <section className="explication">
-        {CONGES_LEGAUX} jours légaux
+        30 jours ouvrables ({SEMAINE_LEGAUX} sem + {SAMEDIS_INITIAL} sam)
         {anciennete.joursBonus > 0
-          ? ` + ${anciennete.joursBonus} ancienneté`
+          ? <> + <strong>{anciennete.joursBonus} ancienneté</strong></>
           : ""}
-        {" "}= <strong>{SEMAINE_INITIAL} semaine</strong> + <strong>{SAMEDIS_INITIAL} samedis</strong>
         {fractionnement.bonus > 0
           ? <> + <strong>{fractionnement.bonus} fractionnement</strong></>
           : ""}
-        {" "}= <strong>{compteurs.totalInitial} jours ouvrables</strong>
+        {" "}= <strong>{compteurs.totalInitial} jours</strong> ({compteurs.semaineInitial} sem + {SAMEDIS_INITIAL} sam)
       </section>
 
       <section className="dashboard">
