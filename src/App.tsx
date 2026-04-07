@@ -445,20 +445,12 @@ function App() {
       </section>
 
       <section className="dashboard">
-        <div className="card total">
-          <div className="card-label">Total restant</div>
-          <div className="card-value">{compteurs.totalRestant}</div>
-          <div className="card-sub">/ {compteurs.totalInitial} jours</div>
-        </div>
-        <div className="card semaine">
-          <div className="card-label">Semaine (L-V)</div>
+        <div className="card solde-card">
+          <div className="card-label">Jours restants</div>
           <div className="card-value">{compteurs.semaineRestant}</div>
-          <div className="card-sub">/ {compteurs.semaineInitial} jours</div>
-        </div>
-        <div className="card samedis">
-          <div className="card-label">Samedis</div>
-          <div className="card-value">{compteurs.samedisRestant}</div>
-          <div className="card-sub">/ {SAMEDIS_INITIAL} jours</div>
+          <div className="card-sub">
+            {compteurs.totalRestant} jours au total dont {compteurs.samedisRestant} samedi{compteurs.samedisRestant > 1 ? "s" : ""}
+          </div>
         </div>
       </section>
 

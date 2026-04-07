@@ -190,55 +190,38 @@ header h1 {
 
 /* Dashboard */
 .dashboard {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
   margin-bottom: 24px;
 }
 
-.card {
+.solde-card {
   border-radius: 10px;
-  padding: 16px 12px;
+  padding: 24px 16px;
   text-align: center;
-}
-
-.card-label {
-  font-size: 11px;
-  font-weight: var(--weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-
-.card-value {
-  font-size: 36px;
-  font-weight: var(--weight-black);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.card-sub {
-  font-size: 12px;
-  font-weight: var(--weight-book);
-  opacity: 0.7;
-}
-
-.card.total {
   background: var(--bleu-light);
-  color: var(--bleu);
   border: 1px solid var(--bleu);
 }
 
-.card.semaine {
-  background: var(--vert-light);
-  color: var(--vert);
-  border: 1px solid var(--vert);
+.solde-card .card-label {
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  color: var(--bleu);
 }
 
-.card.samedis {
-  background: var(--jaune-light);
-  color: var(--jaune);
-  border: 1px solid var(--jaune);
+.solde-card .card-value {
+  font-size: 56px;
+  font-weight: var(--weight-black);
+  line-height: 1;
+  margin-bottom: 8px;
+  color: var(--bleu);
+}
+
+.solde-card .card-sub {
+  font-size: 14px;
+  font-weight: var(--weight-book);
+  color: var(--gris);
 }
 
 /* Form */
@@ -581,21 +564,8 @@ footer {
     font-size: 20px;
   }
 
-  .dashboard {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .card {
-    padding: 12px 8px;
-  }
-
-  .card-value {
-    font-size: 28px;
-  }
-
-  .card-label {
-    font-size: 10px;
+  .solde-card .card-value {
+    font-size: 44px;
   }
 
   .form-section {
