@@ -198,7 +198,7 @@ function App() {
       return;
     }
 
-    const result = calculerConges(debut, fin, compteurs.samedisRestant);
+    const result = calculerConges(debut, fin);
 
     if (result.erreur) {
       setErreur(result.erreur);
@@ -474,7 +474,7 @@ function App() {
       </section>
 
       {dateDebut && dateFin && !erreur && (
-        <Apercu dateDebut={dateDebut} dateFin={dateFin} samedisRestants={compteurs.samedisRestant} />
+        <Apercu dateDebut={dateDebut} dateFin={dateFin} />
       )}
 
       <section className="historique">
@@ -564,18 +564,16 @@ function App() {
 function Apercu({
   dateDebut,
   dateFin,
-  samedisRestants,
 }: {
   dateDebut: string;
   dateFin: string;
-  samedisRestants: number;
 }) {
   const result = useMemo(() => {
     const d = parseLocalDate(dateDebut);
     const f = parseLocalDate(dateFin);
     if (isNaN(d.getTime()) || isNaN(f.getTime()) || d > f) return null;
-    return calculerConges(d, f, samedisRestants);
-  }, [dateDebut, dateFin, samedisRestants]);
+    return calculerConges(d, f);
+  }, [dateDebut, dateFin]);
 
   if (!result || result.erreur) return null;
 

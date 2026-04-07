@@ -27,19 +27,18 @@ const JOURS_SEMAINE = [
 ];
 
 /**
- * Calcule le décompte de jours de congé selon les règles CNETP.
+ * Calcule le décompte de jours de congé selon les règles CNETP Cadre.
  *
- * Règles :
+ * Règles jours ouvrables :
  * - Jours ouvrables = Lundi à Samedi (6j/semaine)
+ * - Seuls les jours ouvrables DANS la période (début → fin) sont décomptés
  * - Jours fériés sur jour ouvrable : non décomptés
- * - Vendredi posé → samedi suivant automatiquement décompté
- * - Exception : si vendredi ET lundi suivant posés → le samedi est décompté
- *   du compteur "samedis" mais fait partie de la semaine complète (pas de pénalité)
+ * - Dimanches : non décomptés
+ * - Pas d'ajout automatique du samedi après un vendredi
  */
 export function calculerConges(
   debut: Date,
-  fin: Date,
-  samedisRestants: number = Infinity
+  fin: Date
 ): ResultatCalcul {
   if (debut > fin) {
     return {
@@ -51,62 +50,18 @@ export function calculerConges(
     };
   }
 
-  // Étape 1 : Construire la liste de tous les jours de la période (début → fin)
-  const tousLesJours: Date[] = [];
-  const current = new Date(debut);
-  while (current <= fin) {
-    tousLesJours.push(new Date(current));
-    current.setDate(current.getDate() + 1);
-  }
-
-  // Étape 2 : Identifier les vendredis posés et vérifier si le lundi suivant est aussi posé
-  const dateSet = new Set(
-    tousLesJours.map((d) => d.toISOString().slice(0, 10))
-  );
-
-  // Étape 3 : Collecter les samedis à ajouter (vendredis posés dont le samedi n'est pas dans la période)
-  // On ne rajoute un samedi automatique que s'il reste des samedis disponibles (cadre)
-  const samedisAjoutes: Date[] = [];
-  let samedisDisponibles = samedisRestants;
-
-  // Compter d'abord les samedis déjà dans la période d'origine
-  for (const jour of tousLesJours) {
-    if (jour.getDay() === 6 && !estJourFerie(jour)) {
-      samedisDisponibles--;
-    }
-  }
-
-  for (const jour of tousLesJours) {
-    if (jour.getDay() === 5) {
-      // Vendredi
-      const samediSuivant = new Date(jour);
-      samediSuivant.setDate(samediSuivant.getDate() + 1);
-      const samKey = samediSuivant.toISOString().slice(0, 10);
-      if (!dateSet.has(samKey) && !estJourFerie(samediSuivant) && samedisDisponibles > 0) {
-        samedisAjoutes.push(samediSuivant);
-        dateSet.add(samKey);
-        samedisDisponibles--;
-      }
-    }
-  }
-
-  // Fusionner et trier
-  const joursComplets = [...tousLesJours, ...samedisAjoutes].sort(
-    (a, b) => a.getTime() - b.getTime()
-  );
-
-  // Étape 4 : Calculer le décompte pour chaque jour
   const details: DecompteDetail[] = [];
   let joursSemaineDecomptes = 0;
   let samedisDecomptes = 0;
 
-  for (const jour of joursComplets) {
-    const dow = jour.getDay(); // 0=Dim, 6=Sam
+  const current = new Date(debut);
+  while (current <= fin) {
+    const dow = current.getDay();
     const nomJour = JOURS_SEMAINE[dow];
-    const ferie = estJourFerie(jour);
+    const ferie = estJourFerie(current);
+    const jour = new Date(current);
 
     if (dow === 0) {
-      // Dimanche : jamais décompté
       details.push({
         date: jour,
         jourSemaine: nomJour,
@@ -115,7 +70,6 @@ export function calculerConges(
         commentaire: "Dimanche — non ouvrable",
       });
     } else if (ferie) {
-      // Jour férié : non décompté
       details.push({
         date: jour,
         jourSemaine: nomJour,
@@ -124,69 +78,26 @@ export function calculerConges(
         commentaire: "Jour férié — non décompté",
       });
     } else if (dow === 6) {
-      // Samedi
-      const estDansPeriodeOrigine = tousLesJours.some(
-        (d) => d.toISOString().slice(0, 10) === jour.toISOString().slice(0, 10)
-      );
-      const vendrediPrecedent = new Date(jour);
-      vendrediPrecedent.setDate(vendrediPrecedent.getDate() - 1);
-      const lundiSuivant = new Date(jour);
-      lundiSuivant.setDate(lundiSuivant.getDate() + 2);
-
-      const vendrediPose = dateSet.has(
-        vendrediPrecedent.toISOString().slice(0, 10)
-      );
-      const lundiPose = dateSet.has(
-        lundiSuivant.toISOString().slice(0, 10)
-      );
-
-      if (ferie) {
-        // déjà géré au-dessus, mais garde pour clarté
-      } else {
-        samedisDecomptes++;
-        let commentaire: string;
-        if (!estDansPeriodeOrigine) {
-          commentaire =
-            "Samedi ajouté automatiquement (vendredi posé)";
-        } else if (vendrediPose && lundiPose) {
-          commentaire =
-            "Samedi — semaine complète (ven+lun posés)";
-        } else {
-          commentaire = "Samedi inclus dans la période";
-        }
-        details.push({
-          date: jour,
-          jourSemaine: nomJour,
-          type: "samedi",
-          decompte: true,
-          commentaire,
-        });
-      }
+      samedisDecomptes++;
+      details.push({
+        date: jour,
+        jourSemaine: nomJour,
+        type: "samedi",
+        decompte: true,
+        commentaire: "Samedi inclus dans la période",
+      });
     } else {
-      // Lundi à Vendredi : décompté
       joursSemaineDecomptes++;
-      let commentaire = "Jour ouvrable décompté";
-      if (dow === 5) {
-        const samediSuivant = new Date(jour);
-        samediSuivant.setDate(samediSuivant.getDate() + 1);
-        const samKey = samediSuivant.toISOString().slice(0, 10);
-        const samFerie = estJourFerie(samediSuivant);
-        if (samFerie) {
-          commentaire = "Vendredi — samedi suivant férié, non ajouté";
-        } else if (dateSet.has(samKey)) {
-          commentaire = "Vendredi — entraîne le décompte du samedi";
-        } else {
-          commentaire = "Vendredi — plus de samedis disponibles, samedi non ajouté";
-        }
-      }
       details.push({
         date: jour,
         jourSemaine: nomJour,
         type: "semaine",
         decompte: true,
-        commentaire,
+        commentaire: "Jour ouvrable décompté",
       });
     }
+
+    current.setDate(current.getDate() + 1);
   }
 
   return {
@@ -200,13 +111,11 @@ export function calculerConges(
 /**
  * Calcule les jours de fractionnement.
  *
- * Règle : on regarde le nombre de jours ouvrables (total CNETP) pris
+ * Règle : on regarde le nombre de jours ouvrables pris
  * en dehors de la période légale (1er mai → 31 octobre).
- * - Si >= 6 jours pris hors période → 2 jours bonus
- * - Si 3 à 5 jours pris hors période → 1 jour bonus
+ * - Si >= 6 jours hors période → 2 jours bonus
+ * - Si 3 à 5 jours hors période → 1 jour bonus
  * - Sinon → 0
- *
- * La période légale est le 1er mai au 31 octobre de l'année en cours.
  */
 export interface ResultatFractionnement {
   joursPrisHorsPeriode: number;
@@ -242,13 +151,13 @@ export function calculerFractionnement(
 
   if (joursPrisHorsPeriode >= 6) {
     bonus = 2;
-    explication = `${joursPrisHorsPeriode} jour(s) pris hors période (1/05–31/10) → 2 jours de fractionnement`;
+    explication = `${joursPrisHorsPeriode} jour(s) hors période légale → +2j`;
   } else if (joursPrisHorsPeriode >= 3) {
     bonus = 1;
-    explication = `${joursPrisHorsPeriode} jour(s) pris hors période (1/05–31/10) → 1 jour de fractionnement`;
+    explication = `${joursPrisHorsPeriode} jour(s) hors période légale → +1j`;
   } else {
     bonus = 0;
-    explication = `${joursPrisHorsPeriode} jour(s) pris hors période (1/05–31/10) → pas de fractionnement (min. 3 requis)`;
+    explication = `${joursPrisHorsPeriode} jour(s) hors période légale → +0j`;
   }
 
   return { joursPrisHorsPeriode, joursPrisEnPeriode, bonus, explication };
