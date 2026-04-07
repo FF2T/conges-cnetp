@@ -35,6 +35,7 @@ const JOURS_SEMAINE = [
  * - Jours fériés sur jour ouvrable : non décomptés
  * - Dimanches : non décomptés
  * - Pas d'ajout automatique du samedi après un vendredi
+ * - Si le vendredi est férié, le samedi suivant n'est pas décompté
  */
 export function calculerConges(
   debut: Date,
@@ -78,14 +79,27 @@ export function calculerConges(
         commentaire: "Jour férié — non décompté",
       });
     } else if (dow === 6) {
-      samedisDecomptes++;
-      details.push({
-        date: jour,
-        jourSemaine: nomJour,
-        type: "samedi",
-        decompte: true,
-        commentaire: "Samedi inclus dans la période",
-      });
+      // Si le vendredi précédent est férié, le samedi n'est pas ouvrable
+      const vendredi = new Date(current);
+      vendredi.setDate(vendredi.getDate() - 1);
+      if (estJourFerie(vendredi)) {
+        details.push({
+          date: jour,
+          jourSemaine: nomJour,
+          type: "samedi",
+          decompte: false,
+          commentaire: "Samedi non décompté — vendredi férié",
+        });
+      } else {
+        samedisDecomptes++;
+        details.push({
+          date: jour,
+          jourSemaine: nomJour,
+          type: "samedi",
+          decompte: true,
+          commentaire: "Samedi inclus dans la période",
+        });
+      }
     } else {
       joursSemaineDecomptes++;
       details.push({
